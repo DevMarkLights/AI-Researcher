@@ -13,6 +13,9 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+from ConnectionManager import manager
+import asyncio
+
 
 
 if os.getenv("USE_LOCAL") == "true":
@@ -30,8 +33,10 @@ Respond ONLY with a JSON array of strings. No explanation, no markdown, no code 
 Example: ["What is X?", "History of X", "Current applications of X"]"""
 
 
-def planner_node(state: AgentState) -> AgentState:
-    print("🗂️  Planner: Breaking down query into subtasks...")
+async def planner_node(state: AgentState) -> AgentState:
+    # print("🗂️  Planner: Breaking down query into subtasks...")
+    await manager.broadcast({"message": "🗂️  Planner: Breaking down query into subtasks..."})
+
 
     messages = [
         SystemMessage(content=SYSTEM_PROMPT),
@@ -54,5 +59,8 @@ def planner_node(state: AgentState) -> AgentState:
                     for line in raw.splitlines() 
                     if line.strip() and line.strip() not in ("{", "}")]
 
-    print(f"   → {len(subtasks)} subtasks identified")
+    # print(f"   → {len(subtasks)} subtasks identified")
+    await manager.broadcast({"message" : f"   → {len(subtasks)} subtasks identified"})
+
+
     return {**state, "subtasks": subtasks}

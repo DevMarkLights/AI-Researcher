@@ -11,6 +11,7 @@ from state import AgentState
 import os
 from dotenv import load_dotenv
 load_dotenv()
+from ConnectionManager import manager
 
 
 if os.getenv("USE_LOCAL") == "true":
@@ -26,10 +27,9 @@ Write 6-8 sentences covering the main concepts, important nuances, real-world im
 and any relevant examples. Be factual and comprehensive."""
 
 
-def _search(query: str) -> str:
+async def _search(query: str) -> str:
     """DuckDuckGo search — no API key needed."""
     try:
-        # from duckduckgo_search import DDGS
         from ddgs import DDGS
         with DDGS() as ddgs:
             results = list(ddgs.text(query, max_results=3))
@@ -38,18 +38,22 @@ def _search(query: str) -> str:
         snippets = "\n".join(f"- {r['title']}: {r['body']}" for r in results)
         return snippets
     except Exception as e:
-        print(f"   ⚠️  Search failed ({e}), using LLM knowledge only")
+        # print(f"   ⚠️  Search failed ({e}), using LLM knowledge only")
+        await manager.broadcast({"message" : f"   ⚠️  Search failed ({e}), using LLM knowledge only"})
         return ""
 
 
-def researcher_node(state: AgentState) -> AgentState:
-    print("🔬 Researcher: Investigating subtasks...")
+async def researcher_node(state: AgentState) -> AgentState:
+    # print("🔬 Researcher: Investigating subtasks...")
+    await manager.broadcast({"message" : "🔬 Researcher: Investigating subtasks..."})
+
 
     results = []
     for i, subtask in enumerate(state["subtasks"]):
-        print(f"   [{i+1}/{len(state['subtasks'])}] {subtask}")
+        # print(f"   [{i+1}/{len(state['subtasks'])}] {subtask}")
+        await manager.broadcast({"message" : f"   [{i+1}/{len(state['subtasks'])}] {subtask}"})
 
-        snippets = _search(subtask)
+        snippets = await _search(subtask)
 
         context = f"Research question: {subtask}"
         if snippets:

@@ -25,7 +25,8 @@ def build_graph() -> StateGraph:
 
     return graph.compile()
 
-
+    
+# running standalone
 if __name__ == "__main__":
     import argparse
     import json

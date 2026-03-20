@@ -1,6 +1,6 @@
 """
 Writer Agent
-Synthesizes all research results into a coherent markdown report.
+Synthesizes all research results into a coherent markdown or txt report.
 """
 
 from langchain_ollama import ChatOllama
@@ -12,6 +12,8 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 load_dotenv()
+from ConnectionManager import manager
+
 
 
 if os.getenv("USE_LOCAL") == "true":
@@ -52,9 +54,10 @@ Use plain text only. No markdown, no hashtags, no asterisks, no bullet dashes.
 Use blank lines to separate sections. Use ALL CAPS for section headings."""
 
 
-def writer_node(state: AgentState) -> AgentState:
-    print("✍️  Writer: Synthesizing report...")
-
+async def writer_node(state: AgentState) -> AgentState:
+    # print("✍️  Writer: Synthesizing report...")
+    await manager.broadcast({"message" : "✍️  Writer: Synthesizing report..."})
+    
     research_blob = "\n\n".join(state["research_results"])
 
     messages = [
