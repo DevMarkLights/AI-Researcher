@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Multi-agent research writer")
     parser.add_argument("query", type=str, help="Research topic or question")
-    parser.add_argument("--output", type=str, default="output/report.md", help="Output file path")
+    parser.add_argument("--output", type=str, default="output/report.txt", help="Output file path")
     try:
         args = parser.parse_args()
     except Exception as e:

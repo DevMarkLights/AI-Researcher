@@ -5,6 +5,7 @@ Breaks the user query into focused research subtasks.
 
 from langchain_ollama import ChatOllama
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_groq import ChatGroq
 from state import AgentState
 import json
 import re
@@ -13,7 +14,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-llm = ChatOllama(model=os.getenv('MODEL'), temperature=0)
+
+if os.getenv("USE_LOCAL") == "true":
+    print('local model')
+    llm = ChatOllama(model="llama3.2:3b", temperature=0)
+else:
+    print('cloud model')
+    llm = ChatGroq(model=os.getenv("GROQ_MODEL"), temperature=0)
+
 
 SYSTEM_PROMPT = """You are a research planner. Given a research topic, break it down into
 3-5 focused subtasks that a researcher should investigate.

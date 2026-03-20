@@ -1,3 +1,4 @@
 *.pyc
 .vscode
 README2.md
+.env
