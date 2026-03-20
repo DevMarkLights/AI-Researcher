@@ -1,6 +1,6 @@
 # 🤖 Multi-Agent Research & Report Writer
 
-A multi-agent system built with **LangGraph** and **Ollama** that researches any topic and produces a structured markdown report.
+A multi-agent system built with **LangGraph** and **Ollama for local** and **Groq** for produciton that researches any topic and produces a structured markdown or txt report.
 
 ## Architecture
 
