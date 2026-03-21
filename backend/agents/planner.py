@@ -17,13 +17,8 @@ from ConnectionManager import manager
 import asyncio
 
 
+from .loadModel import llm
 
-if os.getenv("USE_LOCAL") == "true":
-    print('local model')
-    llm = ChatOllama(model="llama3.2:3b", temperature=0)
-else:
-    print('cloud model')
-    llm = ChatGroq(model=os.getenv("GROQ_MODEL"), temperature=0)
 
 
 SYSTEM_PROMPT = """You are a research planner. Given a research topic, break it down into

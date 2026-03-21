@@ -13,6 +13,7 @@ from agents.planner import planner_node
 from agents.researcher import researcher_node
 from agents.writer import writer_node
 from pathlib import Path
+from agents.loadModel import llm #load model one time
 
 import logging
 

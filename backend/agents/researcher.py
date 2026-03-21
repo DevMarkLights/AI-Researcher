@@ -12,14 +12,8 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from ConnectionManager import manager
+from .loadModel import llm
 
-
-if os.getenv("USE_LOCAL") == "true":
-    print('local model')
-    llm = ChatOllama(model="llama3.2:3b", temperature=0)
-else:
-    print('cloud model')
-    llm = ChatGroq(model=os.getenv("GROQ_MODEL"), temperature=0)
 
 SYSTEM_PROMPT = """You are a focused researcher. Given a specific research question and 
 optionally some web search snippets, provide a thorough and detailed summary of the key facts.
