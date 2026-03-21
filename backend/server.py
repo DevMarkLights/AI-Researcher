@@ -54,7 +54,7 @@ async def ask_question(query: dict = Body(...)):
     Path('output/report.txt').write_text(result["report"])
 
     await manager.broadcast({"message":"Report Finished"})
-    return {"answer": result["report"]}
+    return {"report": result["report"]}
 
 
 @app.websocket("/ws")
@@ -81,5 +81,7 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=8085,
         log_level="debug",
+        ws_ping_interval=30,
+        ws_ping_timeout=60
     )
 

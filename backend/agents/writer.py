@@ -50,13 +50,14 @@ Include:
 - A conclusion with forward-looking insights
 
 Go deep on each section — aim for at least 3-4 paragraphs per topic.
-Use plain text only. No markdown, no hashtags, no asterisks, no bullet dashes.
-Use blank lines to separate sections. Use ALL CAPS for section headings."""
+Use plain text only. No markdown, no asterisks, no bullet dashes.
+Enclose all section headings with hashtags, like: #SECTION HEADING#
+Use blank lines to separate sections."""
 
 
 async def writer_node(state: AgentState) -> AgentState:
     # print("✍️  Writer: Synthesizing report...")
-    await manager.broadcast({"message" : "✍️  Writer: Synthesizing report..."})
+    await manager.broadcast({"message" : "Writer: Synthesizing report..."})
     
     research_blob = "\n\n".join(state["research_results"])
 

@@ -39,13 +39,13 @@ async def _search(query: str) -> str:
         return snippets
     except Exception as e:
         # print(f"   ⚠️  Search failed ({e}), using LLM knowledge only")
-        await manager.broadcast({"message" : f"   ⚠️  Search failed ({e}), using LLM knowledge only"})
+        await manager.broadcast({"message" : f"Search failed ({e}), using LLM knowledge only"})
         return ""
 
 
 async def researcher_node(state: AgentState) -> AgentState:
     # print("🔬 Researcher: Investigating subtasks...")
-    await manager.broadcast({"message" : "🔬 Researcher: Investigating subtasks..."})
+    await manager.broadcast({"message" : "Researcher: Investigating subtasks..."})
 
 
     results = []
