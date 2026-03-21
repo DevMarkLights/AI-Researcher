@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import FastAPI, File, UploadFile, Body, Form, WebSocket
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
@@ -45,7 +47,7 @@ def build_graph() -> StateGraph:
 ai_researcher = build_graph()
 
 
-@app.post("/ask")
+@app.post("/ai-researcher/ask")
 async def ask_question(query: dict = Body(...)):
 
     result = await ai_researcher.ainvoke({"query": query['question']})
@@ -57,18 +59,31 @@ async def ask_question(query: dict = Body(...)):
     return {"report": result["report"]}
 
 
-@app.websocket("/ws")
+@app.websocket("/ai-researcher/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
+        
+    async def keepalive():
+        while True:
+            await asyncio.sleep(10)  # ping every 10 seconds for keep alive
+            try:
+                await websocket.send_json({"ping": True})
+            except:
+                break
+
+    task = asyncio.create_task(keepalive())
     try:
         while True:
-            await websocket.receive_text()  # keep alive
-    except:
+            await asyncio.Future() # keep alive
+    except Exception as e:
+        print(f'Websocket error {e}')
+    finally:
         manager.disconnect(websocket)
+        task.cancel()
         
         
 
-# app.mount("/", StaticFiles(directory="dist", html=True), name="frontend")
+app.mount("/ai-researcher", StaticFiles(directory="dist", html=True), name="static")
 
     
 
@@ -81,7 +96,7 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=8085,
         log_level="debug",
-        ws_ping_interval=30,
-        ws_ping_timeout=60
+        ws_ping_interval=30, 
+        ws_ping_timeout=300
     )
 

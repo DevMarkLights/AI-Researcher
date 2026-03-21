@@ -13,7 +13,7 @@ function App() {
       setLoading(true)
 
       var question = document.getElementById('question').value
-      const url = 'http://localhost:8085/ask'
+      const url = 'http://localhost:8085/ai-researcher/ask'
       // const url = "https://marks-pi.com/ai-researcher/ask"
       const response = await fetch(url, {
         method: "POST",
@@ -51,7 +51,7 @@ function App() {
       setMediumDevice(false)
       setFontSize('20px')
     }
-    const ws = new WebSocket("ws://localhost:8085/ws");
+    const ws = new WebSocket("ws://localhost:8085/ai-researcher/ws");
 
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
