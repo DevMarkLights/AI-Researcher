@@ -6,12 +6,13 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-llm = None
-
+llm_small = None
+llm_large = None
 
 if os.getenv("USE_LOCAL") == "true":
     print('local model')
     llm = ChatOllama(model="llama3.2:3b", temperature=0)
 else:
     print('cloud model')
-    llm = ChatGroq(model=os.getenv("GROQ_MODEL"), temperature=0)
+    llm = ChatGroq(model=os.getenv("GROQ_MODEL_SMALL"), temperature=0)
+    llm = ChatGroq(model=os.getenv("GROQ_MODEL_LARGE"), temperature=0)

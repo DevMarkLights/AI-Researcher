@@ -12,7 +12,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from ConnectionManager import manager
-from .loadModel import llm
+from .loadModel import llm_small as llm
 
 
 SYSTEM_PROMPT = """You are a focused researcher. Given a specific research question and 

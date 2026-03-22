@@ -13,7 +13,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from ConnectionManager import manager
-from .loadModel import llm
+from .loadModel import llm_large as llm
 
     
 

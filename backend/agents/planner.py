@@ -17,7 +17,7 @@ from ConnectionManager import manager
 import asyncio
 
 
-from .loadModel import llm
+from .loadModel import llm_small as llm
 
 
 
