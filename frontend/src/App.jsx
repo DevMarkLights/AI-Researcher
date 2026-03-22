@@ -14,7 +14,6 @@ function App() {
 
       var question = document.getElementById('question').value
       const url = 'https://marks-pi.com/ai-researcher/ask'
-      // const url = "https://marks-pi.com/ai-researcher/ask"
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
