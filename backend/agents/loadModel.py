@@ -12,6 +12,7 @@ llm_large = None
 if os.getenv("USE_LOCAL") == "true":
     print('local model')
     llm_small = ChatOllama(model="llama3.2:3b", temperature=0)
+    llm_large = ChatOllama(model="llama3.2:3b", temperature=0)
 else:
     print('cloud model')
     llm_small = ChatGroq(model=os.getenv("GROQ_MODEL_SMALL"), temperature=0)
