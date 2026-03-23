@@ -15,8 +15,8 @@ function App() {
 
       var question = document.getElementById('question').value
       
-      // const url = 'https://marks-pi.com/ai-researcher/ask'
-      const url = 'http://localhost:8085/ai-researcher/ask'
+      const url = 'https://marks-pi.com/ai-researcher/ask'
+      // const url = 'http://localhost:8085/ai-researcher/ask'
 
       const response = await fetch(url, {
         method: "POST",
@@ -56,8 +56,8 @@ function App() {
     }
     const clientId = crypto.randomUUID()
     setClientID(clientId)
-    var url = 'wss://marks-pi.com/ai-researcher/ws?client_id=${clientId}'
-    var url = `ws://localhost:8085/ai-researcher/ws?client_id=${clientId}`
+    var url = `wss://marks-pi.com/ai-researcher/ws?client_id=${clientId}`
+    // var url = `ws://localhost:8085/ai-researcher/ws?client_id=${clientId}`
     const ws = new WebSocket(url);
 
     ws.onmessage = (event) => {
