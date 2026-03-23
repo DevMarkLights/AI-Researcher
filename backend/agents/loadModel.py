@@ -9,7 +9,7 @@ load_dotenv()
 llm_small = None
 llm_large = None
 
-if os.getenv("USE_LOCAL"):
+if os.getenv("USE_LOCAL") == 'true':
     print('local model')
     llm_small = ChatOllama(model="llama3.2:3b", temperature=0)
     llm_large = ChatOllama(model="llama3.2:3b", temperature=0)
