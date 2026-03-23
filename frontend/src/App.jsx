@@ -54,12 +54,17 @@ function App() {
 
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        if (data.hasOwnProperty('ping') && data.ping) return;
         if (data.hasOwnProperty("message")) {
             setMessages(prev => [...prev, data.message]);
         }
+        
     };
 
     ws.onerror = (error) => console.error(error);
+    ws.onclose = (event) => {
+      console.log('webSocket closed:',event.code,event.reason)
+    }
 
     return () => ws.close(); 
 }, []);

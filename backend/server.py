@@ -1,6 +1,6 @@
 import asyncio
 
-from fastapi import FastAPI, File, UploadFile, Body, Form, WebSocket
+from fastapi import FastAPI, File, UploadFile, Body, Form, WebSocket, WebSocketDisconnect
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -56,7 +56,7 @@ async def ask_question(query: dict = Body(...)):
     Path('output/report.txt').parent.mkdir(parents=True, exist_ok=True)
     Path('output/report.txt').write_text(result["report"])
 
-    await manager.broadcast({"message":"Report Finished"})
+    await manager.broadcast({"message":"Report Finished","done":True})
     return {"report": result["report"]}
 
 
@@ -75,9 +75,12 @@ async def websocket_endpoint(websocket: WebSocket):
     task = asyncio.create_task(keepalive())
     try:
         while True:
-            await asyncio.Future() # keep alive
+            await websocket.receive() # keep alive
+    except WebSocketDisconnect:
+        print("Client disconnected")
     except Exception as e:
         print(f'Websocket error {e}')
+    
     finally:
         manager.disconnect(websocket)
         task.cancel()
