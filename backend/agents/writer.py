@@ -52,7 +52,7 @@ Use blank lines to separate sections."""
 
 async def writer_node(state: AgentState) -> AgentState:
     # print("✍️  Writer: Synthesizing report...")
-    await manager.broadcast({"message" : "Writer: Synthesizing report..."})
+    await manager.broadcast(message={"message" : "Writer: Synthesizing report..."}, client_id=state['clientID'])
     
     research_blob = "\n\n".join(state["research_results"])
 

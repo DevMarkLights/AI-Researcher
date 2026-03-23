@@ -30,7 +30,7 @@ Example: ["What is X?", "History of X", "Current applications of X"]"""
 
 async def planner_node(state: AgentState) -> AgentState:
     # print("🗂️  Planner: Breaking down query into subtasks...")
-    await manager.broadcast({"message": "Planner: Breaking down query into subtasks..."})
+    await manager.broadcast(message={"message": "Planner: Breaking down query into subtasks..."}, client_id=state['clientID'])
 
 
     messages = [
@@ -55,7 +55,7 @@ async def planner_node(state: AgentState) -> AgentState:
                     if line.strip() and line.strip() not in ("{", "}")]
 
     # print(f"   → {len(subtasks)} subtasks identified")
-    await manager.broadcast({"message" : f"   → {len(subtasks)} subtasks identified"})
+    await manager.broadcast(message={"message" : f"   → {len(subtasks)} subtasks identified"}, client_id=state['clientID'])
 
 
     return {**state, "subtasks": subtasks}

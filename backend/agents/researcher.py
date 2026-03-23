@@ -21,7 +21,7 @@ Write 6-8 sentences covering the main concepts, important nuances, real-world im
 and any relevant examples. Be factual and comprehensive."""
 
 
-async def _search(query: str) -> str:
+async def _search(query: str, client_id: str) -> str:
     """DuckDuckGo search — no API key needed."""
     try:
         from ddgs import DDGS
@@ -33,21 +33,21 @@ async def _search(query: str) -> str:
         return snippets
     except Exception as e:
         # print(f"   ⚠️  Search failed ({e}), using LLM knowledge only")
-        await manager.broadcast({"message" : f"Search failed ({e}), using LLM knowledge only"})
+        await manager.broadcast(message={"message" : f"Search failed ({e}), using LLM knowledge only"},client_id=client_id)
         return ""
 
 
 async def researcher_node(state: AgentState) -> AgentState:
     # print("🔬 Researcher: Investigating subtasks...")
-    await manager.broadcast({"message" : "Researcher: Investigating subtasks..."})
+    await manager.broadcast(message={"message" : "Researcher: Investigating subtasks..."}, client_id=state['clientID'])
 
 
     results = []
     for i, subtask in enumerate(state["subtasks"]):
         # print(f"   [{i+1}/{len(state['subtasks'])}] {subtask}")
-        await manager.broadcast({"message" : f"   [{i+1}/{len(state['subtasks'])}] {subtask}"})
+        await manager.broadcast(message={"message" : f"   [{i+1}/{len(state['subtasks'])}] {subtask}"}, client_id=state['clientID'])
 
-        snippets = await _search(subtask)
+        snippets = await _search(subtask,client_id=state['clientID'])
 
         context = f"Research question: {subtask}"
         if snippets:

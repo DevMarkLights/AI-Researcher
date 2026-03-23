@@ -1,0 +1,10 @@
+<svg width="100%" viewBox="0 0 400 421.69" xmlns="http://www.w3.org/2000/svg"><defs><mask id="imagine-text-gaps-idi8k3" maskUnits="userSpaceOnUse"><rect x="0" y="0" width="400" height="421.69" fill="white"/><rect x="105.7815933227539" y="26.863101959228516" width="188.43678283691406" height="208.82540893554688" fill="black" rx="2"/><rect x="150.88856506347656" y="204.86309814453125" width="100.96773529052734" height="208.82540893554688" fill="black" rx="2"/></mask></defs>
+
+  <rect x="0" y="0" width="400" height="400" rx="80" fill="#0f172a" style="fill:rgb(15, 23, 42);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <line x1="40" y1="205" x2="360" y2="205" stroke="#38bdf8" stroke-width="2.5" opacity="0.4" stroke-dasharray="4 6" mask="url(#imagine-text-gaps-idi8k3)" style="fill:rgb(0, 0, 0);stroke:rgb(56, 189, 248);color:rgb(255, 255, 255);stroke-width:2.5px;stroke-dasharray:4px, 6px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <text x="200" y="190" text-anchor="middle" font-size="175" font-weight="700" font-family="monospace" fill="#38bdf8" letter-spacing="-6" style="fill:rgb(56, 189, 248);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:monospace;font-size:175px;font-weight:700;text-anchor:middle;dominant-baseline:auto">AI</text>
+  <text x="200" y="368" text-anchor="middle" font-size="175" font-weight="700" font-family="monospace" fill="#818cf8" letter-spacing="-6" style="fill:rgb(129, 140, 248);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:monospace;font-size:175px;font-weight:700;text-anchor:middle;dominant-baseline:auto">R</text>
+
+</svg>

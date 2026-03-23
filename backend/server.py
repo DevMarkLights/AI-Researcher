@@ -1,4 +1,5 @@
 import asyncio
+import uuid
 
 from fastapi import FastAPI, File, UploadFile, Body, Form, WebSocket, WebSocketDisconnect
 from typing import List
@@ -20,7 +21,6 @@ import logging
 logging.basicConfig(level=logging.ERROR)
 logging.getLogger("uvicorn.access").setLevel(logging.INFO)
 logging.getLogger("uvicorn.error").setLevel(logging.INFO)
-
 
 app = FastAPI()
 app.add_middleware(
@@ -50,20 +50,23 @@ ai_researcher = build_graph()
 
 @app.post("/ai-researcher/ask")
 async def ask_question(query: dict = Body(...)):
-
-    result = await ai_researcher.ainvoke({"query": query['question']})
+    
+    
+    client_id = query["clientID"]
+    result = await ai_researcher.ainvoke({"query": query['question'], "clientID":client_id})
     
     Path('output/report.txt').parent.mkdir(parents=True, exist_ok=True)
     Path('output/report.txt').write_text(result["report"])
 
-    await manager.broadcast({"message":"Report Finished","done":True})
+    await manager.broadcast(message={"message":"Report Finished","done":True}, client_id=client_id)
     return {"report": result["report"]}
 
 
 @app.websocket("/ai-researcher/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await manager.connect(websocket)
-        
+async def websocket_endpoint(websocket: WebSocket, client_id: str=None):
+    await manager.connect(websocket,client_id=client_id)
+    
+
     async def keepalive():
         while True:
             await asyncio.sleep(10)  # ping every 10 seconds for keep alive
@@ -82,14 +85,13 @@ async def websocket_endpoint(websocket: WebSocket):
         print(f'Websocket error {e}')
     
     finally:
-        manager.disconnect(websocket)
+        manager.disconnect(websocket=websocket,clientID=client_id)
         task.cancel()
         
         
 
 app.mount("/ai-researcher", StaticFiles(directory="dist", html=True), name="static")
 
-    
 
 
 if __name__ == "__main__":
@@ -100,6 +102,7 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=8085,
         log_level="debug",
+        reload=True,
         ws_ping_interval=30, 
         ws_ping_timeout=300
     )

@@ -6,3 +6,4 @@ class AgentState(TypedDict):
     subtasks: List[str]               # Planner's breakdown
     research_results: List[str]       # Researcher's findings per subtask
     report: Optional[str]             # Final written report
+    clientID: str                     # clientID for client needed for websocket

@@ -7,17 +7,21 @@ function App() {
   const [report, setReport] = useState("")
   const [mediumDevice, setMediumDevice] = useState(false)
   const [fontSize, setFontSize] = useState('12px')
+  const [clientId,setClientID] = useState('')
 
   async function query(){
     try{
       setLoading(true)
 
       var question = document.getElementById('question').value
-      const url = 'https://marks-pi.com/ai-researcher/ask'
+      
+      // const url = 'https://marks-pi.com/ai-researcher/ask'
+      const url = 'http://localhost:8085/ai-researcher/ask'
+
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({"question":question}), 
+        body: JSON.stringify({"question":question, "clientID": clientId}), 
       });
 
     
@@ -50,7 +54,11 @@ function App() {
       setMediumDevice(false)
       setFontSize('20px')
     }
-    const ws = new WebSocket("wss://marks-pi.com/ai-researcher/ws");
+    const clientId = crypto.randomUUID()
+    setClientID(clientId)
+    var url = 'wss://marks-pi.com/ai-researcher/ws?client_id=${clientId}'
+    var url = `ws://localhost:8085/ai-researcher/ws?client_id=${clientId}`
+    const ws = new WebSocket(url);
 
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
