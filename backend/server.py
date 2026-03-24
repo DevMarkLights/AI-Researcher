@@ -7,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 from ConnectionManager import manager
+from fastapi.responses import FileResponse
+
 
 from langgraph.graph import StateGraph, END
 from state import AgentState
@@ -21,6 +23,10 @@ import logging
 logging.basicConfig(level=logging.ERROR)
 logging.getLogger("uvicorn.access").setLevel(logging.INFO)
 logging.getLogger("uvicorn.error").setLevel(logging.INFO)
+
+BASE_DIR = Path(__file__).parent
+reports_dir = BASE_DIR / "reports"
+reports_dir.mkdir(exist_ok=True)
 
 app = FastAPI()
 app.add_middleware(
@@ -61,6 +67,12 @@ async def ask_question(query: dict = Body(...)):
     await manager.broadcast(message={"message":"Report Finished","done":True}, client_id=client_id)
     return {"report": result["report"]}
 
+@app.get("/ai-researcher/file")
+async def getFile(clientID:str,format:str,filename:str):
+    file_path = f'reports/{clientID}_report.{format}'
+    return FileResponse(path=file_path,filename=filename+'.'+format)
+    
+
 
 @app.websocket("/ai-researcher/ws")
 async def websocket_endpoint(websocket: WebSocket, client_id: str=None):
@@ -86,6 +98,10 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str=None):
     
     finally:
         manager.disconnect(websocket=websocket,clientID=client_id)
+        # when client disconnets remove all the files they generated from server
+        folder = BASE_DIR / 'reports'
+        for file in folder.glob(f"{client_id}*"):
+            file.unlink()
         task.cancel()
         
         
