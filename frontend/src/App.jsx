@@ -80,7 +80,7 @@ function App() {
     var fn = document.getElementById('question').value.replace(/[^a-zA-Z0-9]/g, '_')
     fn = fn.replace(" ",'_')
     // var url = `http://localhost:8085/ai-researcher/file?format=${format}&clientID=${clientId}&filename=${fn}`
-    var url = `https://marks-pi.com/ai-researcher/file?format=${format}&clientID=${clientId}%&filename=${fn}`
+    var url = `https://marks-pi.com/ai-researcher/file?format=${format}&clientID=${clientId}&filename=${fn}`
 
     const response = await fetch(url, {
       method: "GET"
