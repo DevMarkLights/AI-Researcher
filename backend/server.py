@@ -70,6 +70,14 @@ async def ask_question(query: dict = Body(...)):
 @app.get("/ai-researcher/file")
 async def getFile(clientID:str,format:str,filename:str):
     file_path = f'reports/{clientID}_report.{format}'
+    
+    if format == 'pdf': #fix for mobile devices opening new page instead of just downloading pdfs
+        return FileResponse(
+            file_path,
+            filename=f"{filename}.pdf",
+            media_type="application/octet-stream"  # forces download instead of open
+        )
+    
     return FileResponse(path=file_path,filename=filename+'.'+format)
     
 

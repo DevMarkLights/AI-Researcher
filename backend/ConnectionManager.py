@@ -18,6 +18,9 @@ class ConnectionManager:
     
 
     async def broadcast(self, message: dict, client_id: str):
+        if client_id not in self.active_connections_dict:
+            print(f"Client {client_id} already disconnected, skipping broadcast")
+            return
         
         try:
             ws = self.active_connections_dict[client_id]
