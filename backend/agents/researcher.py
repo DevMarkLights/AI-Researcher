@@ -32,8 +32,8 @@ async def _search(query: str, client_id: str) -> str:
         snippets = "\n".join(f"- {r['title']}: {r['body']}" for r in results)
         return snippets
     except Exception as e:
-        # print(f"   ⚠️  Search failed ({e}), using LLM knowledge only")
-        await manager.broadcast(message={"message" : f"Search failed ({e}), using LLM knowledge only"},client_id=client_id)
+        print(f"   ⚠️  Search failed ({e}), using LLM knowledge only")
+        # await manager.broadcast(message={"message" : f"Web Search failed ({e}), using LLM knowledge only"},client_id=client_id)
         return ""
 
 
