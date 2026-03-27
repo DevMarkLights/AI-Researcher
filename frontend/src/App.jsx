@@ -26,8 +26,8 @@ function App() {
 
     const clientId = crypto.randomUUID()
     setClientID(clientId)
-    // var url = `wss://marks-pi.com/ai-researcher/ws?client_id=${clientId}`
-    var url = `ws://localhost:8085/ai-researcher/ws?client_id=${clientId}`
+    var url = `wss://marks-pi.com/ai-researcher/ws?client_id=${clientId}`
+    // var url = `ws://localhost:8085/ai-researcher/ws?client_id=${clientId}`
     const ws = new WebSocket(url);
 
     ws.onmessage = (event) => {
@@ -53,8 +53,8 @@ function App() {
 
       var question = document.getElementById('question').value
       
-      // const url = 'https://marks-pi.com/ai-researcher/ask'
-      const url = 'http://localhost:8085/ai-researcher/ask'
+      const url = 'https://marks-pi.com/ai-researcher/ask'
+      // const url = 'http://localhost:8085/ai-researcher/ask'
 
       const response = await fetch(url, {
         method: "POST",
@@ -79,8 +79,8 @@ function App() {
   async function downloadFile(format){
     var fn = document.getElementById('question').value.replace(/[^a-zA-Z0-9]/g, '_')
     fn = fn.replace(" ",'_')
-    var url = `http://localhost:8085/ai-researcher/file?format=${format}&clientID=${clientId}&filename=${fn}`
-    // var url = `https://marks-pi.com/ai-researcher/file?format=${format}&clientID=${clientId}&filename=${fn}`
+    // var url = `http://localhost:8085/ai-researcher/file?format=${format}&clientID=${clientId}&filename=${fn}`
+    var url = `https://marks-pi.com/ai-researcher/file?format=${format}&clientID=${clientId}&filename=${fn}`
 
     const response = await fetch(url, {
       method: "GET"
