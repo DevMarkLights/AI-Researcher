@@ -7,3 +7,4 @@ class AgentState(TypedDict):
     research_results: List[str]       # Researcher's findings per subtask
     report: Optional[str]             # Final written report
     clientID: str                     # clientID for client needed for websocket
+    sources: List[any]                # keep track of sources for citations

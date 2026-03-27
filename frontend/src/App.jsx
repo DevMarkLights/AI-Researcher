@@ -26,8 +26,8 @@ function App() {
 
     const clientId = crypto.randomUUID()
     setClientID(clientId)
-    var url = `wss://marks-pi.com/ai-researcher/ws?client_id=${clientId}`
-    // var url = `ws://localhost:8085/ai-researcher/ws?client_id=${clientId}`
+    // var url = `wss://marks-pi.com/ai-researcher/ws?client_id=${clientId}`
+    var url = `ws://localhost:8085/ai-researcher/ws?client_id=${clientId}`
     const ws = new WebSocket(url);
 
     ws.onmessage = (event) => {
@@ -53,8 +53,8 @@ function App() {
 
       var question = document.getElementById('question').value
       
-      const url = 'https://marks-pi.com/ai-researcher/ask'
-      // const url = 'http://localhost:8085/ai-researcher/ask'
+      // const url = 'https://marks-pi.com/ai-researcher/ask'
+      const url = 'http://localhost:8085/ai-researcher/ask'
 
       const response = await fetch(url, {
         method: "POST",
@@ -79,8 +79,8 @@ function App() {
   async function downloadFile(format){
     var fn = document.getElementById('question').value.replace(/[^a-zA-Z0-9]/g, '_')
     fn = fn.replace(" ",'_')
-    // var url = `http://localhost:8085/ai-researcher/file?format=${format}&clientID=${clientId}&filename=${fn}`
-    var url = `https://marks-pi.com/ai-researcher/file?format=${format}&clientID=${clientId}&filename=${fn}`
+    var url = `http://localhost:8085/ai-researcher/file?format=${format}&clientID=${clientId}&filename=${fn}`
+    // var url = `https://marks-pi.com/ai-researcher/file?format=${format}&clientID=${clientId}&filename=${fn}`
 
     const response = await fetch(url, {
       method: "GET"
@@ -102,6 +102,12 @@ function App() {
 
   }
 
+  useEffect(() => {
+    const textarea = document.getElementById('processingTextArea');
+    textarea.scrollTop = textarea.scrollHeight;
+
+  }, [message]); // runs whenever content changes
+
   return (
      <div style={{ minWidth: '98vw'}}>
       <div>
@@ -122,7 +128,7 @@ function App() {
             </div>
             <div style={{ minWidth: '40%'}}>
               <h2>Processing steps</h2>
-              <textarea className='createBorder' wrap='on' style={{resize: 'none', minWidth: '100%', minHeight: '70%', borderRadius: '10px', padding:'10px'}} id='processing steps' readOnly='True' value={message.join('\n')}></textarea>
+              <textarea id='processingTextArea' className='createBorder' wrap='on' style={{resize: 'none', minWidth: '100%', minHeight: '70%', borderRadius: '10px', padding:'10px'}} readOnly='True' value={message.join('\n')}></textarea>
             </div>
           </div>
           <div style={{display: 'flex', flexDirection: 'row', minWidth:'18%', justifyContent: 'space-evenly', margin:'10px 0'}}>
@@ -148,11 +154,11 @@ function App() {
             </div>
             <div style={{display: 'flex', flexDirection: 'row', minWidth:'18%', justifyContent: 'space-evenly', margin:'10px 0'}}>
               <button id='ask' disabled={loading} style={{fontSize: '20px'}} onClick={() => query()}>Ask</button>
-              <button id='clear' disabled={loading} style={{fontSize: '20px'}} onClick={() => {setReport(""), setMessages("")}}>Clear Report</button>
+              <button id='clear' disabled={loading} style={{fontSize: '20px'}} onClick={() => {setReport(""), setMessages([])}}>Clear Report</button>
             </div>
             <div style={{ minWidth: '40%'}}>
               <h2>Processing steps</h2>
-              <textarea className='createBorder' wrap='off' style={{resize: 'none', minWidth: '90%', minHeight: '15vh', fontSize:'12px', borderRadius: '10px', padding:'10px'}} id='processing steps' readOnly='True' value={message.join('\n')}></textarea>
+              <textarea id='processingTextArea' className='createBorder' wrap='off' style={{resize: 'none', minWidth: '90%', minHeight: '15vh', fontSize:'12px', borderRadius: '10px', padding:'10px'}} readOnly='True' value={message.join('\n')}></textarea>
             </div>
           </div>
           <div style={{display:'flex',flexDirection:'row',justifyContent:'flex-end', maxWidth:'95vw', margin:'15px 0'}}>

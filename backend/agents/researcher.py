@@ -13,6 +13,8 @@ from dotenv import load_dotenv
 load_dotenv()
 from ConnectionManager import manager
 from .loadModel import llm_small as llm
+import re
+
 
 
 SYSTEM_PROMPT = """You are a focused researcher. Given a specific research question and 
@@ -26,15 +28,26 @@ async def _search(query: str, client_id: str) -> str:
     try:
         from ddgs import DDGS
         with DDGS() as ddgs:
-            results = list(ddgs.text(query, max_results=3))
+            results = list(ddgs.text(query, max_results=1))
         if not results:
-            return ""
+            return ([],"")
         snippets = "\n".join(f"- {r['title']}: {r['body']}" for r in results)
-        return snippets
+        # ret = [{'claim': r['title'], 'source': r['href'], 'snippet':r['body']} for r in results]
+        
+        formatted = ""
+        for r in results:
+            # formatted.append(f"CLAIM: {r['title']} \n" f"SOURCE: {r['href']} \n")
+            formatted = f"{r['title']} - {r['href']}"
+        
+        # formatted = "\n\n".join(formatted)
+        # formatted = "\n".join(formatted)
+
+        
+        return (formatted,snippets)
     except Exception as e:
         print(f"   ⚠️  Search failed ({e}), using LLM knowledge only")
         # await manager.broadcast(message={"message" : f"Web Search failed ({e}), using LLM knowledge only"},client_id=client_id)
-        return ""
+        return ([],"")
 
 
 async def researcher_node(state: AgentState) -> AgentState:
@@ -43,11 +56,14 @@ async def researcher_node(state: AgentState) -> AgentState:
 
 
     results = []
+    formatted = []
     for i, subtask in enumerate(state["subtasks"]):
         # print(f"   [{i+1}/{len(state['subtasks'])}] {subtask}")
         await manager.broadcast(message={"message" : f"   [{i+1}/{len(state['subtasks'])}] {subtask}"}, client_id=state['clientID'])
 
-        snippets = await _search(subtask,client_id=state['clientID'])
+        f, snippets = await _search(subtask,client_id=state['clientID'])
+        
+        formatted.append(f)
 
         context = f"Research question: {subtask}"
         if snippets:
@@ -60,5 +76,17 @@ async def researcher_node(state: AgentState) -> AgentState:
 
         response = llm.invoke(messages)
         results.append(f"## {subtask}\n\n{response.content.strip()}")
+    
+    formatted = "\n".join(f"[{i+1}] {s}" for i, s in enumerate(formatted))
 
-    return {**state, "research_results": results}
+
+    return {**state, "research_results": results, 'sources': formatted}
+
+
+def clean_snippet(text: str) -> str:
+    # Insert space before capital letters that are jammed together
+    text = re.sub(r'([a-z])([A-Z])', r'\1 \2', text)
+    # Fix lowercase words jammed together (harder, but this helps common cases)
+    text = re.sub(r'([a-zA-Z])of([a-zA-Z])', r'\1 of \2', text)
+    text = re.sub(r'([a-zA-Z])in([A-Z])', r'\1 in \2', text)
+    return text
