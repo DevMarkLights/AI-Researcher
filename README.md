@@ -28,12 +28,12 @@ User Query
                            ▼
               ┌─────────────────────┐
               │    Writer Agent     │  Deduplicates sources, synthesizes findings
-              │                    │  into a structured report with inline citations
+              │                     │  into a structured report with inline citations
               └─────────┬───────────┘
                         │
                         ▼
           ┌─────────────────────────┐
-          │  PDF  │  DOCX  │  TXT  │  Downloadable report formats
+          │  PDF  │  DOCX  │  TXT   │  Downloadable report formats
           └─────────────────────────┘
 ```
 
