@@ -1,7 +1,6 @@
 import asyncio
-import uuid
 import subprocess
-
+import time
 
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile, Body, Form, WebSocket, WebSocketDisconnect
 from typing import List
@@ -13,6 +12,7 @@ from fastapi.responses import FileResponse
 
 
 from langgraph.graph import StateGraph, END
+from langgraph.types import Send
 from state import AgentState
 from agents.planner import planner_node
 from agents.researcher import researcher_node
@@ -44,6 +44,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def dispatch_research(state: AgentState):
+    return [Send("researcher", {"subtask": task, "query": state["query"], "clientID": state["clientID"], "subtask_index": i + 1}) for i,task in enumerate(state['subtasks'])]
+
 def build_graph() -> StateGraph:
     graph = StateGraph(AgentState)
 
@@ -52,7 +55,7 @@ def build_graph() -> StateGraph:
     graph.add_node("writer", writer_node)
 
     graph.set_entry_point("planner")
-    graph.add_edge("planner", "researcher")
+    graph.add_conditional_edges("planner", dispatch_research)
     graph.add_edge("researcher", "writer")
     graph.add_edge("writer", END)
 
@@ -63,7 +66,7 @@ ai_researcher = build_graph()
 
 @app.post("/ai-researcher/ask")
 async def ask_question(query: dict = Body(...)):
-    
+    start = time.time()
     
     client_id = query["clientID"]
     result = await ai_researcher.ainvoke({"query": query['question'], "clientID":client_id})
@@ -72,6 +75,8 @@ async def ask_question(query: dict = Body(...)):
     Path('output/report.txt').write_text(result["report"])
 
     await manager.broadcast(message={"message":"Report Finished","done":True}, client_id=client_id)
+    end = time.time()
+    print(f'{(end - start):.2f}s')
     return {"report": result["report"]}
 
 @app.get("/ai-researcher/file")

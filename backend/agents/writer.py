@@ -65,6 +65,12 @@ Citation rules:
 - The REFERENCES section must list each source as: [1] <claim> — <url>
 - Only cite sources that were actually used in the report
 - Sources may contain minor formatting artifacts — interpret them intelligently and do not reproduce these artifacts in the report
+- Use ONLY the sources explicitly provided in the context
+- Do NOT invent, fabricate, or infer any additional sources
+- Do NOT generate fake URLs, paper titles, or author names
+- If only 3 sources are provided, the references section has exactly 3 entries
+- Copy source URLs exactly as given, do not modify them
+- Do Not Duplicate citations
 
 
 Go deep on each section — aim for at most 2-3 paragraph(s) per topic.
@@ -79,13 +85,17 @@ async def writer_node(state: AgentState) -> AgentState:
     
     research_blob = "\n\n".join(state["research_results"])
     sources = state['sources']
-
+    noneDuplicateSources = []
+    for source in sources:
+        if source not in noneDuplicateSources:
+            noneDuplicateSources.append(source)
     messages = [
         SystemMessage(content=SYSTEM_PROMPT),
         HumanMessage(content=(
             f"Original query: {state['query']}\n\n"
             f"Research notes: \n{research_blob}"
-            f"Sources: \n{sources}"
+            f"Sources: \n{noneDuplicateSources}"
+            # f"Sources (use ONLY these {len(noneDuplicateSources)} sources, no others):\n{noneDuplicateSources}"
         ))
     ]
 

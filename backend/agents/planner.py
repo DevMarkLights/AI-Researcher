@@ -24,8 +24,20 @@ from .loadModel import llm_small as llm
 SYSTEM_PROMPT = """You are a research planner. Given a research topic, break it down into
 3-5 focused subtasks that a researcher should investigate.
 
-Respond ONLY with a JSON array of strings. No explanation, no markdown, no code blocks.
-Example: ["What is X?", "History of X", "Current applications of X"]"""
+Each subtask must:
+- Be specific to the exact topic provided, not generic
+- Include key terminology from the topic
+- Be phrased as a search query, not a category label
+
+BAD (too generic):
+Topic: "Quantum computing in cryptography"
+["Definition of quantum computing", "Applications of quantum computing", "Challenges"]
+
+GOOD (specific):
+Topic: "Quantum computing in cryptography"
+["How quantum computers break RSA and elliptic curve encryption", "Post-quantum cryptography algorithms like CRYSTALS-Kyber and NTRU", "Timeline for quantum computers threatening current encryption standards"]
+
+Respond ONLY with a JSON array of strings. No explanation, no markdown, no code blocks."""
 
 
 async def planner_node(state: AgentState) -> AgentState:
@@ -55,7 +67,7 @@ async def planner_node(state: AgentState) -> AgentState:
                     if line.strip() and line.strip() not in ("{", "}")]
 
     # print(f"   → {len(subtasks)} subtasks identified")
-    await manager.broadcast(message={"message" : f"   → {len(subtasks)} subtasks identified"}, client_id=state['clientID'])
+    # await manager.broadcast(message={"message" : f"   → {len(subtasks)} subtasks identified"}, client_id=state['clientID'])
 
 
     return {**state, "subtasks": subtasks}

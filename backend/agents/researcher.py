@@ -14,6 +14,8 @@ load_dotenv()
 from ConnectionManager import manager
 from .loadModel import llm_small as llm
 import re
+import asyncio
+from ddgs import DDGS
 
 
 
@@ -26,9 +28,15 @@ and any relevant examples. Be factual and comprehensive."""
 async def _search(query: str, client_id: str) -> str:
     """DuckDuckGo search — no API key needed."""
     try:
-        from ddgs import DDGS
-        with DDGS() as ddgs:
-            results = list(ddgs.text(query, max_results=1))
+        # from ddgs import DDGS
+        
+        # with DDGS() as ddgs:
+        #     results = list(ddgs.text(query, max_results=1))
+        def do_search():
+            with DDGS() as ddgs:
+                return list(ddgs.text(query, max_results=1))
+            
+        results = await asyncio.to_thread(do_search)
         if not results:
             return ([],"")
         snippets = "\n".join(f"- {r['title']}: {r['body']}" for r in results)
@@ -52,35 +60,40 @@ async def _search(query: str, client_id: str) -> str:
 
 async def researcher_node(state: AgentState) -> AgentState:
     # print("🔬 Researcher: Investigating subtasks...")
-    await manager.broadcast(message={"message" : "Researcher: Investigating subtasks..."}, client_id=state['clientID'])
-
-
-    results = []
-    formatted = []
-    for i, subtask in enumerate(state["subtasks"]):
-        # print(f"   [{i+1}/{len(state['subtasks'])}] {subtask}")
-        await manager.broadcast(message={"message" : f"   [{i+1}/{len(state['subtasks'])}] {subtask}"}, client_id=state['clientID'])
-
-        f, snippets = await _search(subtask,client_id=state['clientID'])
-        
-        formatted.append(f)
-
-        context = f"Research question: {subtask}"
-        if snippets:
-            context += f"\n\nWeb search results:\n{snippets}"
-
-        messages = [
-            SystemMessage(content=SYSTEM_PROMPT),
-            HumanMessage(content=context)
-        ]
-
-        response = llm.invoke(messages)
-        results.append(f"## {subtask}\n\n{response.content.strip()}")
+    subtask = state["subtask"]
+    index = state['subtask_index']
+    await manager.broadcast(message={"message" : f"Researcher {index}: Investigating subtasks..."}, client_id=state['clientID'])
+    await manager.broadcast(message={"message" : f"     {subtask}"}, client_id=state['clientID'])
     
-    formatted = "\n".join(f"[{i+1}] {s}" for i, s in enumerate(formatted))
+    # results = []
+    # formatted = []
+    
+    # for i, subtask in enumerate(state["subtasks"]):
+        # print(f"   [{i+1}/{len(state['subtasks'])}] {subtask}")
+    
+    # await manager.broadcast(message={"message" : f"   [{i+1}/{len(state['subtasks'])}] {subtask}"}, client_id=state['clientID'])
+    
+
+    f, snippets = await _search(subtask,client_id=state['clientID'])
+    
+    formatted = f
+
+    context = f"Research question: {subtask}"
+    if snippets:
+        context += f"\n\nWeb search results:\n{snippets}"
+
+    messages = [
+        SystemMessage(content=SYSTEM_PROMPT),
+        HumanMessage(content=context)
+    ]
+
+    response = await llm.ainvoke(messages)
+    results = (f"## {subtask}\n\n{response.content.strip()}")
+    
+    # formatted = "\n".join(f"[{i+1}] {s}" for i, s in enumerate(formatted))
 
 
-    return {**state, "research_results": results, 'sources': formatted}
+    return {"research_results": [results], 'sources': [formatted]}
 
 
 def clean_snippet(text: str) -> str:
