@@ -80,7 +80,6 @@ Use blank lines to separate sections."""
 
 
 async def writer_node(state: AgentState) -> AgentState:
-    # print("✍️  Writer: Synthesizing report...")
     await manager.broadcast(message={"message" : "Writer: Synthesizing report..."}, client_id=state['clientID'])
     
     research_blob = "\n\n".join(state["research_results"])
@@ -95,7 +94,6 @@ async def writer_node(state: AgentState) -> AgentState:
             f"Original query: {state['query']}\n\n"
             f"Research notes: \n{research_blob}"
             f"Sources: \n{noneDuplicateSources}"
-            # f"Sources (use ONLY these {len(noneDuplicateSources)} sources, no others):\n{noneDuplicateSources}"
         ))
     ]
 

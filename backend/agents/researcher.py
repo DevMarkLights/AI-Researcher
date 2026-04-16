@@ -28,10 +28,6 @@ and any relevant examples. Be factual and comprehensive."""
 async def _search(query: str, client_id: str) -> str:
     """DuckDuckGo search — no API key needed."""
     try:
-        # from ddgs import DDGS
-        
-        # with DDGS() as ddgs:
-        #     results = list(ddgs.text(query, max_results=1))
         def do_search():
             with DDGS() as ddgs:
                 return list(ddgs.text(query, max_results=1))
@@ -40,39 +36,23 @@ async def _search(query: str, client_id: str) -> str:
         if not results:
             return ([],"")
         snippets = "\n".join(f"- {r['title']}: {r['body']}" for r in results)
-        # ret = [{'claim': r['title'], 'source': r['href'], 'snippet':r['body']} for r in results]
         
         formatted = ""
         for r in results:
-            # formatted.append(f"CLAIM: {r['title']} \n" f"SOURCE: {r['href']} \n")
             formatted = f"{r['title']} - {r['href']}"
-        
-        # formatted = "\n\n".join(formatted)
-        # formatted = "\n".join(formatted)
-
         
         return (formatted,snippets)
     except Exception as e:
         print(f"   ⚠️  Search failed ({e}), using LLM knowledge only")
-        # await manager.broadcast(message={"message" : f"Web Search failed ({e}), using LLM knowledge only"},client_id=client_id)
         return ([],"")
 
 
 async def researcher_node(state: AgentState) -> AgentState:
-    # print("🔬 Researcher: Investigating subtasks...")
+    
     subtask = state["subtask"]
     index = state['subtask_index']
     await manager.broadcast(message={"message" : f"Researcher {index}: Investigating subtasks..."}, client_id=state['clientID'])
     await manager.broadcast(message={"message" : f"     {subtask}"}, client_id=state['clientID'])
-    
-    # results = []
-    # formatted = []
-    
-    # for i, subtask in enumerate(state["subtasks"]):
-        # print(f"   [{i+1}/{len(state['subtasks'])}] {subtask}")
-    
-    # await manager.broadcast(message={"message" : f"   [{i+1}/{len(state['subtasks'])}] {subtask}"}, client_id=state['clientID'])
-    
 
     f, snippets = await _search(subtask,client_id=state['clientID'])
     
@@ -90,7 +70,6 @@ async def researcher_node(state: AgentState) -> AgentState:
     response = await llm.ainvoke(messages)
     results = (f"## {subtask}\n\n{response.content.strip()}")
     
-    # formatted = "\n".join(f"[{i+1}] {s}" for i, s in enumerate(formatted))
 
 
     return {"research_results": [results], 'sources': [formatted]}
