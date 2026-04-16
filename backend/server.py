@@ -67,17 +67,19 @@ ai_researcher = build_graph()
 @app.post("/ai-researcher/ask")
 async def ask_question(query: dict = Body(...)):
     # start = time.time()
-    
-    client_id = query["clientID"]
-    result = await ai_researcher.ainvoke({"query": query['question'], "clientID":client_id})
-    
-    Path('output/report.txt').parent.mkdir(parents=True, exist_ok=True)
-    Path('output/report.txt').write_text(result["report"])
+    try:
+        client_id = query["clientID"]
+        result = await ai_researcher.ainvoke({"query": query['question'], "clientID":client_id})
+        
+        Path('output/report.txt').parent.mkdir(parents=True, exist_ok=True)
+        Path('output/report.txt').write_text(result["report"])
 
-    await manager.broadcast(message={"message":"Report Finished","done":True}, client_id=client_id)
-    # end = time.time()
-    # print(f'{(end - start):.2f}s')
-    return {"report": result["report"]}
+        await manager.broadcast(message={"message":"Report Finished","done":True}, client_id=client_id)
+        # end = time.time()
+        # print(f'{(end - start):.2f}s')
+        return {"report": result["report"]}
+    except Exception as e:
+        return {"report": "Free LLM model tps/rpm/rpd exceeded try again in a 2 minutes!"}
 
 @app.get("/ai-researcher/file")
 async def getFile(clientID:str,format:str,filename:str):
