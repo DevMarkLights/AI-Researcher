@@ -66,7 +66,7 @@ ai_researcher = build_graph()
 
 @app.post("/ai-researcher/ask")
 async def ask_question(query: dict = Body(...)):
-    start = time.time()
+    # start = time.time()
     
     client_id = query["clientID"]
     result = await ai_researcher.ainvoke({"query": query['question'], "clientID":client_id})
@@ -75,8 +75,8 @@ async def ask_question(query: dict = Body(...)):
     Path('output/report.txt').write_text(result["report"])
 
     await manager.broadcast(message={"message":"Report Finished","done":True}, client_id=client_id)
-    end = time.time()
-    print(f'{(end - start):.2f}s')
+    # end = time.time()
+    # print(f'{(end - start):.2f}s')
     return {"report": result["report"]}
 
 @app.get("/ai-researcher/file")
